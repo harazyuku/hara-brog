@@ -1,7 +1,6 @@
 services:
   - type: web
     name: my-blog-app
-    # runtime: php ではなく env: php が正解です
     env: php
     plan: free
     buildCommand: |
