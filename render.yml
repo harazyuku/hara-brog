@@ -1,7 +1,7 @@
 services:
   - type: web
     name: my-blog-app
-    env: php
+    runtime: php   # env ではなく runtime に変更
     plan: free
     buildCommand: |
       composer install --no-dev
@@ -15,5 +15,7 @@ services:
         value: production
       - key: APP_DEBUG
         value: false
+      - key: LOG_CHANNEL
+        value: stderr
       - key: DB_CONNECTION
-        value: pgsql # Renderの無料DBはPostgreSQLなので、pgsqlにします
+        value: pgsql
