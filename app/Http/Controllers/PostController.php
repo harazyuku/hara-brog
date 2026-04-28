@@ -15,7 +15,7 @@ class PostController extends Controller
     {
 $posts = Post::latest()->get();
     return Inertia::render('Posts', [
-        'latestPosts' => $posts // 'posts' を 'latestPosts' に書き換える
+        'Posts' => $posts
     ]);
     }
 
@@ -60,9 +60,11 @@ $posts = Post::latest()->get();
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+        return inertia('PostEdit', [
+            'post' => $post
+        ]);
     }
 
     /**
