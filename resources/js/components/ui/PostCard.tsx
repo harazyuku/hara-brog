@@ -30,8 +30,8 @@ function PostCard({ post }: PostCardProps) {
     return (
         <div className="group relative bg-white border border-gray-100 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
             {/* 全面リンク */}
-            <Link 
-                href={`/posts/${post.id}`} 
+            <Link
+                href={`/posts/${post.id}`}
                 className="absolute inset-0 z-0 rounded-xl"
             >
                 <span className="sr-only">詳細を見る</span>
