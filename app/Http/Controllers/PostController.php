@@ -70,9 +70,19 @@ $posts = Post::latest()->get();
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'category' => 'required',
+            'content' => 'required',
+        ]);
+
+        // 2. データベースに保存
+        Post::create($validated);
+
+        // 3. 一覧ページに戻る
+        return redirect()->route('posts.index');
     }
 
     /**
