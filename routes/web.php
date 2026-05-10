@@ -5,6 +5,7 @@ use Laravel\Fortify\Features;
 use Inertia\Inertia;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RegisteredUserController;
 
 
 // web.php
@@ -12,11 +13,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 });
 
-// これだけで index, create, store, show, edit, update, destroy の7つが有効になります
+// 投稿CRUD
 Route::resource('posts', PostController::class);
 
-// トップページ（/）にアクセスしたときも、PostControllerのindex（一覧）を見せたいなら
+// トップページ
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// 会員登録CRUD
+Route::resource('register', RegisteredUserController::class);
 
 require __DIR__.'/settings.php';
 

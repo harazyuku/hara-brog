@@ -18,12 +18,7 @@ createInertiaApp({
         
         page.then((module) => {
             const pageNode = module.default;
-            pageNode.layout = pageNode.layout || ((page: React.ReactNode) => {
-                if (name === 'welcome') return page;
-                if (name.startsWith('auth/')) return <AuthLayout>{page}</AuthLayout>;
-                if (name.startsWith('settings/')) return <AppLayout><SettingsLayout>{page}</SettingsLayout></AppLayout>;
-                return <AppLayout>{page}</AppLayout>;
-            });
+            pageNode.layout = pageNode.layout || ((page: React.ReactNode) => page);
         });
         
         return page;

@@ -13,10 +13,10 @@ class PostController extends Controller
      */
     public function index()
     {
-$posts = Post::latest()->get();
-    return Inertia::render('Posts', [
-        'Posts' => $posts
-    ]);
+        $posts = Post::latest()->get();
+        return Inertia::render('Posts', [
+            'Posts' => $posts
+        ]);
     }
 
 
@@ -31,7 +31,7 @@ $posts = Post::latest()->get();
     /**
      * Store a newly created resource in storage.
      */
- public function store(Request $request)
+    public function store(Request $request)
     {
         // 1. バリデーション（入力チェック）
         $validated = $request->validate([
