@@ -36,7 +36,7 @@ export default function PostEdit({ post }: PostEditProps) {
 
                 <main className="max-w-4xl mx-auto px-6 mt-10">
                     <div className="flex items-center justify-between mb-8">
-                        <Link 
+                        <Link
                             href={`/posts/${post.id}`}
                             className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
                         >
@@ -83,10 +83,10 @@ export default function PostEdit({ post }: PostEditProps) {
                                         className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer"
                                     >
                                         <option value="">選択してください</option>
-                                        <option value="tech">テック</option>
-                                        <option value="life">日常</option>
+                                        <option value="テック">テック</option>
+                                        <option value="日常">日常</option>
                                         {/* 元のカテゴリーが選択肢にない場合のために表示しておく */}
-                                        {post.category !== 'tech' && post.category !== 'life' && (
+                                        {post.category !== '日常' && post.category !== '日常' && (
                                             <option value={post.category}>{post.category}</option>
                                         )}
                                     </select>

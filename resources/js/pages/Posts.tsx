@@ -17,15 +17,15 @@ interface Props {
 
 // 関数のカッコの中で { latestPosts } を受け取る！
 function Posts({ Posts }: Props) {
-  return (
-    <div>
-        <Navbar />
-        <div className="py-12">
-            <h1 className="text-center text-3xl font-bold mb-8">記事一覧</h1>
-            <PostsSection posts={Posts} />
+    return (
+        <div>
+            <Navbar />
+            <div className="py-12">
+                <h1 className="text-center text-3xl font-bold mb-8">記事一覧</h1>
+                <PostsSection posts={Posts} />
+            </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default Posts

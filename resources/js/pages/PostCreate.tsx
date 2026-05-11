@@ -74,8 +74,8 @@ function PostCreate() {
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                 >
                                     <option value="">選択してください</option>
-                                    <option value="tech">テック</option>
-                                    <option value="life">日常</option>
+                                    <option value="テック">テック</option>
+                                    <option value="日常">日常</option>
                                 </select>
                             )}
                         </div>
