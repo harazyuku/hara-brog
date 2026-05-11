@@ -52,6 +52,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $post->load('comments');
+
         return inertia('PostShow', [
             'post' => $post
         ]);

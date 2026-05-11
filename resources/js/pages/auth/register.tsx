@@ -12,21 +12,13 @@ import Navbar from '@/components/layout/Navbar';
 
 export default function Register() {
     return (
-        <div className="min-h-screen bg-white text-gray-900">
+        <div className="min-h-screen bg-white">
             <Head title="会員登録" />
             <Navbar />
 
-            <div className="py-20 px-6 flex flex-col items-center justify-center bg-linear-to-r from-blue-50 to-indigo-50 min-h-[calc(100vh-64px)]">
-                <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-xl border border-blue-100">
-                    <div className="text-center mb-10">
-                        <div className="inline-block px-4 py-1.5 mb-4 text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-100 rounded-full">
-                            Join us
-                        </div>
-                        <h1 className="text-4xl font-extrabold text-gray-900 mb-3">会員登録</h1>
-                        <p className="text-gray-500 text-lg">
-                            あなたもブログの一員になりませんか？
-                        </p>
-                    </div>
+            <div className="min-h-screen bg-gray-50 py-12 px-4">
+                <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-8 border-b pb-4">会員登録</h1>
 
                     <Form
                         {...store.form()}
@@ -37,8 +29,8 @@ export default function Register() {
                         {({ processing, errors }) => (
                             <>
                                 <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="name" className="text-sm font-bold text-gray-700 ml-1">お名前</Label>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="name" className="block text-sm font-medium text-gray-700">お名前</Label>
                                         <Input
                                             id="name"
                                             type="text"
@@ -47,14 +39,14 @@ export default function Register() {
                                             tabIndex={1}
                                             autoComplete="name"
                                             name="name"
-                                            placeholder="名前を入力"
-                                            className="h-12 rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="池原 優斗"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                         />
-                                        <InputError message={errors.name} className="mt-1 ml-1" />
+                                        <InputError message={errors.name} />
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="email" className="text-sm font-bold text-gray-700 ml-1">メールアドレス</Label>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="email" className="block text-sm font-medium text-gray-700">メールアドレス</Label>
                                         <Input
                                             id="email"
                                             type="email"
@@ -63,44 +55,40 @@ export default function Register() {
                                             autoComplete="email"
                                             name="email"
                                             placeholder="example@mail.com"
-                                            className="h-12 rounded-xl border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                         />
-                                        <InputError message={errors.email} className="mt-1 ml-1" />
+                                        <InputError message={errors.email} />
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="password">パスワード</Label>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="password" className="block text-sm font-medium text-gray-700">パスワード</Label>
                                         <PasswordInput
                                             id="password"
                                             required
                                             tabIndex={3}
                                             autoComplete="off"
                                             name="password"
-                                            placeholder="Password"
-                                            className="h-12 rounded-xl border-gray-200"
+                                            placeholder="パスワードを入力"
                                         />
-                                        <InputError message={errors.password} className="mt-1 ml-1" />
+                                        <InputError message={errors.password} />
                                     </div>
 
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="password_confirmation">
-                                            パスワード（確認）
-                                        </Label>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">パスワード（確認）</Label>
                                         <PasswordInput
                                             id="password_confirmation"
                                             required
                                             tabIndex={4}
                                             autoComplete="off"
                                             name="password_confirmation"
-                                            placeholder="Confirm password"
-                                            className="h-12 rounded-xl border-gray-200"
+                                            placeholder="もう一度パスワードを入力"
                                         />
-                                        <InputError message={errors.password_confirmation} className="mt-1 ml-1" />
+                                        <InputError message={errors.password_confirmation} />
                                     </div>
 
                                     <Button
                                         type="submit"
-                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white h-14 rounded-2xl text-lg font-bold transition-all shadow-lg shadow-blue-200 active:scale-[0.98] mt-2"
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition-colors duration-200 active:scale-[0.98]"
                                         tabIndex={5}
                                         data-test="register-user-button"
                                     >
@@ -109,7 +97,7 @@ export default function Register() {
                                     </Button>
                                 </div>
 
-                                <div className="mt-10 pt-8 border-t border-gray-100 text-center text-sm text-gray-600">
+                                <div className="mt-8 text-center text-sm text-gray-600 border-t pt-6">
                                     すでにアカウントをお持ちですか？{' '}
                                     <TextLink href={login()} tabIndex={6} className="text-blue-600 font-bold hover:underline">
                                         ログインする

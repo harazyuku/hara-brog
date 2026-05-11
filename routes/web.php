@@ -16,6 +16,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // 投稿CRUD
 Route::resource('posts', PostController::class);
 
+// コメント投稿
+Route::post('posts/{post}/comments', [App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
+
 // トップページ
 Route::get('/', [HomeController::class, 'index'])->name('home');
 

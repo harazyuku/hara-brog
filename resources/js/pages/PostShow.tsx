@@ -1,7 +1,14 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, Tag, Clock } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
+
+interface Comment {
+    id: number;
+    name: string;
+    content: string;
+    created_at: string;
+}
 
 interface Post {
     id: number;
@@ -9,6 +16,7 @@ interface Post {
     content: string;
     category: string;
     created_at: string;
+    comments: Comment[];
 }
 
 interface PostShowProps {
@@ -16,6 +24,19 @@ interface PostShowProps {
 }
 
 export default function PostShow({ post }: PostShowProps) {
+
+    const { data, setData, post: postRequest, processing, reset, errors } = useForm({
+        name: '',
+        content: '',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        postRequest(`/posts/${post.id}/comments`, {
+            onSuccess: () => reset('content'),
+        });
+    };
+
     return (
         <>
             <Head title={`${post.title} | いけBlog`} />
@@ -84,6 +105,96 @@ export default function PostShow({ post }: PostShowProps) {
                             </div>
                         </div>
                     </div>
+
+                    {/* コメントセクション */}
+                    <section className="mt-12">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            コメント
+                            <span className="text-sm font-normal text-gray-400 font-sans">
+                                {post.comments ? post.comments.length : 0}件
+                            </span>
+                        </h2>
+
+                        <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+                            {/* コメント投稿フォーム */}
+                            <form onSubmit={submit} className="mb-12 border-b border-gray-50 pb-12">
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                                        <h3 className="text-sm font-bold text-gray-900">コメントを投稿する</h3>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <input
+                                                type="text"
+                                                className="w-60 bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                                                placeholder="名無し" maxLength={10}
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                            />
+                                            {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <textarea
+                                            className="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none resize-none"
+                                            placeholder="ここにコメントを入力してください..."
+                                            rows={4}
+                                            value={data.content}
+                                            onChange={(e) => setData('content', e.target.value)}
+                                            required
+                                            maxLength={255}
+                                        ></textarea>
+                                        {errors.content && <p className="mt-1 text-xs text-red-500">{errors.content}</p>}
+                                    </div>
+
+                                    <div className="flex justify-end">
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-100 active:scale-[0.98] hover:shadow-blue-200 disabled:opacity-50"
+                                        >
+                                            {processing ? '送信中...' : 'コメントを送信'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            {/* コメント一覧 */}
+                            <div className="space-y-4">
+                                {post.comments && post.comments.length > 0 ? (
+                                    post.comments.map((commentItem) => (
+                                        <div
+                                            key={commentItem.id}
+                                            className="p-5 rounded-2xl bg-gray-50/30 border border-gray-100/50 hover:bg-white hover:border-blue-100 hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300"
+                                        >
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                                                    <h4 className="text-sm font-bold text-gray-900">
+                                                        {commentItem.name}
+                                                    </h4>
+                                                </div>
+                                                <time className="text-[10px] text-gray-400 font-medium tracking-wider uppercase">
+                                                    {commentItem.created_at}
+                                                </time>
+                                                </div>
+                                            {/* 本文：左側に細いラインを入れて引用のような落ち着いた雰囲気に */}
+                                            <p className="text-gray-600 text-sm leading-relaxed pl-3.5 border-l-2 border-gray-100 ml-0.5 whitespace-pre-wrap break-words">
+                                                {commentItem.content}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-center text-gray-400 text-sm py-10 border-t border-gray-50">
+                                        まだコメントはありません。
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </section>
                 </main>
             </div>
         </>

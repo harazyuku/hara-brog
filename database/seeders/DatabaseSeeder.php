@@ -17,16 +17,32 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         // ❌ User::factory() ではなく、✅ Post::create() を使う
-        Post::create([
+        $post1 = Post::create([
             'title' => 'データベースからこんにちは',
             'content' => 'これはDBから取得した記事です。',
             'category' => '日常'
         ]);
 
-        Post::create([
+        $post1->comments()->create([
+            'name' => '名無し',
+            'content' => 'テストコメント'
+
+        ]);
+
+        $post1->comments()->create([
+            'name' => 'SEIKIN',
+            'content' => 'ヒカキンさんですか？'
+        ]);
+
+        $post2 = Post::create([
             'title' => 'テストおおおおおおおおおお',
             'content' => 'あああああああｓ',
             'category' => '食べログアンチスレ'
         ]);
+
+        $post2->comments()->create([
+            'name' => 'ｾｲｷﾝ',
+            'content' => 'テストコメント'
+            ]);
     }
 }
