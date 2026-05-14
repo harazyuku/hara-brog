@@ -6,9 +6,10 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libxml2-dev \
     libzip-dev \
+    libpq-dev \
     git \
     unzip \
-    && docker-php-ext-install pdo_mysql gd zip
+    && docker-php-ext-install pdo_mysql pdo_pgsql gd zip
 
 # Apacheの設定
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
