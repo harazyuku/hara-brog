@@ -9,7 +9,12 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     git \
     unzip \
+    curl \
     && docker-php-ext-install pdo_mysql pdo_pgsql gd zip
+
+# Node.js インストール
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs
 
 # Apacheの設定
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
@@ -29,7 +34,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Vite build
-RUN npm install && npm run build
+RUN npm install --no-audit --no-fund && npm run build
 
 # 権限の設定
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
