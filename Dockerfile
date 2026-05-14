@@ -28,5 +28,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Composerの実行
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Vite build
+RUN npm install && npm run build
+
 # 権限の設定
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
