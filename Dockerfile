@@ -1,6 +1,16 @@
+FROM node:20 AS node_builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --no-audit --no-fund
+
+COPY . .
+RUN npm run build
+
+
 FROM php:8.4-apache
 
-# 必要なライブラリのインストール
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     zlib1g-dev \
@@ -12,29 +22,17 @@ RUN apt-get update && apt-get install -y \
     curl \
     && docker-php-ext-install pdo_mysql pdo_pgsql gd zip
 
-# Node.js インストール
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs
-
-# Apacheの設定
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN a2enmod rewrite
 
-# 作業ディレクトリの設定
 WORKDIR /var/www/html
 
-# ソースコードをコピー
-COPY . /var/www/html
+COPY . .
 
-# Composerのインストール
+COPY --from=node_builder /app/public/build ./public/build
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Composerの実行
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Vite build
-RUN npm install --no-audit --no-fund && npm run build
-
-# 権限の設定
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
