@@ -5,7 +5,7 @@ FROM php:8.4-apache
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
-# Install system dependencies (PHP extensions + SQLite)
+# Install system dependencies (Full set for Laravel 13)
 RUN apt-get update && apt-get install -y \
     libpng-dev libxml2-dev libzip-dev libpq-dev libonig-dev libicu-dev libsqlite3-dev unzip git curl \
     && docker-php-ext-configure intl \
@@ -28,18 +28,22 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
-# ビルド用環境変数 (SQLiteを使用可能にする)
+# ビルド用環境変数の徹底
 ENV APP_ENV=production
 ENV APP_KEY=base64:j2FzWZip07EHE+ZpQDB30wtXvhQ7orNHTpxei1780XE=
 ENV DB_CONNECTION=sqlite
-ENV DB_DATABASE=:memory:
+ENV DB_DATABASE=/var/www/html/database/database.sqlite
+RUN mkdir -p database && touch database/database.sqlite
 ENV NODE_OPTIONS=--max-old-space-size=400
 ENV PORT=80
 
-# NPM Install & Build
+# NPM Install
 RUN npm install --no-audit --no-fund
-# Wayfinderの型生成が失敗してもビルドを止めない
-RUN php artisan wayfinder:generate --with-form || echo "Wayfinder skip"
+
+# ビルド前に型生成を試みる（ここでエラーが出ればログに理由が表示されます）
+RUN php artisan wayfinder:generate --with-form
+
+# Viteビルド
 RUN npm run build
 
 # Permissions
