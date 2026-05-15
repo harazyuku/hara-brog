@@ -2,9 +2,9 @@
 FROM node:20 AS node_builder
 WORKDIR /app
 COPY package*.json ./
-# メモリ不足対策
-ENV NODE_OPTIONS=--max-old-space-size=450
-RUN npm install --no-audit --no-fund
+# メモリ制限を緩和 (Renderのビルド環境に合わせる)
+ENV NODE_OPTIONS=--max-old-space-size=1024
+RUN npm install --no-audit --no-fund --loglevel info
 COPY . .
 RUN npm run build
 
@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libonig-dev \
     libicu-dev \
+    libsqlite3-dev \
     git \
     unzip \
     curl \
@@ -50,7 +51,7 @@ COPY --from=node_builder /app/public/build ./public/build
 
 # Install PHP dependencies
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --verbose
 
 # Create necessary directories and set permissions
 RUN mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache \
