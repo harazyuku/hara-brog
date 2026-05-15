@@ -1,0 +1,12 @@
+node_modules
+vendor
+.git
+.env
+storage/*.key
+public/storage
+public/build
+bootstrap/cache/*
+tests
+Dockerfile
+render.yaml
+.cursor
