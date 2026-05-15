@@ -1,31 +1,30 @@
 # --- Node.js Build Stage ---
-FROM node:20 AS node_builder
+FROM node:20-slim AS node_builder
 WORKDIR /app
 COPY package*.json ./
-# メモリ制限を緩和 (Renderのビルド環境に合わせる)
-ENV NODE_OPTIONS=--max-old-space-size=1024
-RUN npm install --no-audit --no-fund --loglevel info
+# 512MB制限に合わせてメモリ消費をさらに抑制
+ENV NODE_OPTIONS=--max-old-space-size=300
+RUN npm install --no-audit --no-fund
 COPY . .
 RUN npm run build
 
 # --- PHP/Apache Stage ---
-FROM php:8.4-apache
+FROM php:8.3-apache
 
-# Install system dependencies
+# Install minimum system dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
-    zlib1g-dev \
     libxml2-dev \
     libzip-dev \
     libpq-dev \
     libonig-dev \
     libicu-dev \
-    libsqlite3-dev \
     git \
     unzip \
     curl \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install pdo_mysql pdo_pgsql gd zip opcache intl bcmath mbstring
+    && docker-php-ext-install pdo_mysql pdo_pgsql gd zip opcache intl bcmath mbstring \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Apache Config
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
@@ -43,7 +42,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /var/www/html
 
-# Copy application files (respecting .dockerignore)
+# Copy application files
 COPY . .
 
 # Copy build artifacts from node_builder
@@ -51,7 +50,7 @@ COPY --from=node_builder /app/public/build ./public/build
 
 # Install PHP dependencies
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader --no-interaction --verbose
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Create necessary directories and set permissions
 RUN mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache \
