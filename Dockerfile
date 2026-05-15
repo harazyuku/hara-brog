@@ -1,5 +1,5 @@
 # --- Build Stage (PHP + Node.js) ---
-FROM php:8.3-cli AS builder
+FROM php:8.4-cli AS builder
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
@@ -23,7 +23,7 @@ RUN npm install
 RUN npm run build
 
 # --- Final Stage (Apache) ---
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
