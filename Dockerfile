@@ -1,9 +1,9 @@
 # --- Node.js Build Stage ---
-FROM node:20-slim AS node_builder
+FROM node:20 AS node_builder
 WORKDIR /app
 COPY package*.json ./
-# 512MB制限に合わせてメモリ消費をさらに抑制
-ENV NODE_OPTIONS=--max-old-space-size=300
+# Tailwind v4/Vite 6のビルドメモリ制限 (512MBの無料枠に最適化)
+ENV NODE_OPTIONS=--max-old-space-size=350
 RUN npm install --no-audit --no-fund
 COPY . .
 RUN npm run build
@@ -11,7 +11,7 @@ RUN npm run build
 # --- PHP/Apache Stage ---
 FROM php:8.3-apache
 
-# Install minimum system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libxml2-dev \
@@ -32,7 +32,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 RUN a2enmod rewrite
 
-# Make Apache listen to the $PORT environment variable
+# Make Apache listen to the $PORT
 RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf
 RUN sed -i 's/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/g' /etc/apache2/sites-available/000-default.conf
 
