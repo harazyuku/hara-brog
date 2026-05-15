@@ -1,16 +1,18 @@
 # --- Node.js Build Stage ---
 FROM node:20 AS node_builder
+# Viteビルド中に php artisan wayfinder:generate が走るためPHPが必要
+RUN apt-get update && apt-get install -y php-cli php-xml php-mbstring unzip
+
 WORKDIR /app
 COPY package*.json ./
-# Tailwind v4/Vite 6のビルドメモリ制限 (512MBの無料枠に最適化)
-ENV NODE_OPTIONS=--max-old-space-size=350
+ENV NODE_OPTIONS=--max-old-space-size=400
 RUN npm install --no-audit --no-fund
 COPY . .
 RUN npm run build
 
 # --- PHP/Apache Stage ---
 FROM php:8.3-apache
-
+...
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
