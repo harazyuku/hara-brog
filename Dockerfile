@@ -2,6 +2,8 @@
 FROM node:20 AS node_builder
 WORKDIR /app
 COPY package*.json ./
+# メモリ不足対策
+ENV NODE_OPTIONS=--max-old-space-size=450
 RUN npm install --no-audit --no-fund
 COPY . .
 RUN npm run build
@@ -17,10 +19,12 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpq-dev \
     libonig-dev \
+    libicu-dev \
     git \
     unzip \
     curl \
-    && docker-php-ext-install pdo_mysql pdo_pgsql gd zip opcache
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install pdo_mysql pdo_pgsql gd zip opcache intl bcmath mbstring
 
 # Apache Config
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
