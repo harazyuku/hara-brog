@@ -1,31 +1,33 @@
-# --- Node.js Build Stage ---
-FROM node:20 AS node_builder
+# --- Build Stage (PHP + Node.js) ---
+FROM php:8.3-cli AS builder
 
-# Viteビルド中に php artisan wayfinder:generate が走るためPHPが必要
-RUN apt-get update && apt-get install -y php-cli php-xml php-mbstring unzip
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
+# Install system dependencies for PHP extensions
+RUN apt-get update && apt-get install -y \
+    libpng-dev libxml2-dev libzip-dev libpq-dev libonig-dev libicu-dev unzip git curl \
+    && docker-php-ext-install pdo_mysql pdo_pgsql gd zip intl bcmath mbstring
 
 WORKDIR /app
-COPY package*.json ./
-ENV NODE_OPTIONS=--max-old-space-size=400
-RUN npm install --no-audit --no-fund
 COPY . .
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install --no-interaction --no-dev --optimize-autoloader
+
+# Install NPM and Build (Wayfinder needs php artisan to work here)
+ENV NODE_OPTIONS=--max-old-space-size=400
+RUN npm install
 RUN npm run build
 
-# --- PHP/Apache Stage ---
+# --- Final Stage (Apache) ---
 FROM php:8.3-apache
 
-# Install dependencies
+# Install runtime dependencies
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libxml2-dev \
-    libzip-dev \
-    libpq-dev \
-    libonig-dev \
-    libicu-dev \
-    git \
-    unzip \
-    curl \
-    && docker-php-ext-configure intl \
+    libpng-dev libxml2-dev libzip-dev libpq-dev libonig-dev libicu-dev unzip git curl \
     && docker-php-ext-install pdo_mysql pdo_pgsql gd zip opcache intl bcmath mbstring \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -45,19 +47,11 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /var/www/html
 
-# Copy application files
-COPY . .
+# Copy everything from builder stage
+COPY --from=builder /app /var/www/html
 
-# Copy build artifacts from node_builder
-COPY --from=node_builder /app/public/build ./public/build
-
-# Install PHP dependencies
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# Create necessary directories and set permissions
-RUN mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache \
+# Set permissions
+RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
 # Start Apache
