@@ -17,15 +17,20 @@ COPY . .
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
-# ビルド時に php artisan を動かすためのダミー設定
-# (Wayfinderがルートをスキャンする際にLaravelを起動させるため必要)
-ENV APP_KEY=base64:dummykeydummykeydummykeydummykeydummykey=
+# ビルド用環境変数の徹底（Wayfinderの型生成を成功させるため）
+ENV APP_ENV=production
+ENV APP_KEY=base64:j2FzWZip07EHE+ZpQDB30wtXvhQ7orNHTpxei1780XE=
 ENV DB_CONNECTION=sqlite
 ENV DB_DATABASE=:memory:
 ENV NODE_OPTIONS=--max-old-space-size=400
 
-# Install NPM and Build
-RUN npm install
+# NPMインストール
+RUN npm install --no-audit --no-fund
+
+# Wayfinderの型生成を事前に手動で試みる（失敗しても続行するように || true を付与）
+RUN php artisan wayfinder:generate --with-form || echo "Wayfinder generation skipped"
+
+# Viteビルド
 RUN npm run build
 
 # --- Final Stage (Apache) ---
