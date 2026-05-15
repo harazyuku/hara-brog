@@ -5,7 +5,7 @@ FROM php:8.4-cli AS builder
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
-# Install system dependencies for PHP extensions
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev libxml2-dev libzip-dev libpq-dev libonig-dev libicu-dev unzip git curl \
     && docker-php-ext-install pdo_mysql pdo_pgsql gd zip intl bcmath mbstring
@@ -17,8 +17,14 @@ COPY . .
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
-# Install NPM and Build (Wayfinder needs php artisan to work here)
+# ビルド時に php artisan を動かすためのダミー設定
+# (Wayfinderがルートをスキャンする際にLaravelを起動させるため必要)
+ENV APP_KEY=base64:dummykeydummykeydummykeydummykeydummykey=
+ENV DB_CONNECTION=sqlite
+ENV DB_DATABASE=:memory:
 ENV NODE_OPTIONS=--max-old-space-size=400
+
+# Install NPM and Build
 RUN npm install
 RUN npm run build
 
