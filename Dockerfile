@@ -1,5 +1,6 @@
 # --- Node.js Build Stage ---
 FROM node:20 AS node_builder
+
 # Viteビルド中に php artisan wayfinder:generate が走るためPHPが必要
 RUN apt-get update && apt-get install -y php-cli php-xml php-mbstring unzip
 
@@ -12,7 +13,7 @@ RUN npm run build
 
 # --- PHP/Apache Stage ---
 FROM php:8.3-apache
-...
+
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
