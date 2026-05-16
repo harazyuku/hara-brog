@@ -12,15 +12,11 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
 
-   resolve: (name) => {
+    resolve: async (name) => {
         const pages = import.meta.glob('./pages/**/*.tsx');
-        const page = resolvePageComponent(`./pages/${name}.tsx`, pages) as Promise<any>;
-        
-        page.then((module) => {
-            const pageNode = module.default;
-            pageNode.layout = pageNode.layout || ((page: React.ReactNode) => page);
-        });
-        
+        const module = (await resolvePageComponent(`./pages/${name}.tsx`, pages)) as any;
+        const page = module.default;
+        page.layout = page.layout || ((page: React.ReactNode) => page);
         return page;
     },
 
