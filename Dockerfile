@@ -51,4 +51,4 @@ RUN npm run build
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-CMD ["apache2-foreground"]
+CMD ["sh", "-c", "php artisan migrate --force && exec apache2-foreground"]

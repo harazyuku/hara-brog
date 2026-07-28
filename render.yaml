@@ -20,8 +20,6 @@ services:
           property: connectionString
       - key: LOG_CHANNEL
         value: stderr
-    preDeployCommand: php artisan migrate --force
-
 databases:
   - name: my-blog-db
     plan: free
