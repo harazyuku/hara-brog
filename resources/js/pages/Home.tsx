@@ -42,7 +42,7 @@ export default function Home({ latestPosts, visitorNumber }: HomeProps) {
                                     <img
                                         src="/images/IMG_9062.jpg"
                                         alt="池原優斗"
-                                        className="mb-3 aspect-square w-full border border-[#5a4848] bg-[#111] object-cover"
+                                        className="mb-3 h-28 w-28 border border-[#5a4848] bg-[#111] object-cover sm:h-36 sm:w-36 md:aspect-square md:h-auto md:w-full"
                                     />
                                     <p className="mb-1 text-sm font-bold text-[#eee9e9]">
                                         池原 優斗
