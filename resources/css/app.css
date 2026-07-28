@@ -9,7 +9,8 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'DotGothic16', Verdana, Arial, 'Noto Sans JP',
+        'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
@@ -137,7 +138,283 @@
         @apply border-border;
     }
 
+    html {
+        font-size: 105%;
+    }
+
     body {
-        @apply bg-background text-foreground;
+        @apply bg-black text-[#dedada];
+        letter-spacing: 0.005em;
+    }
+
+    body::before,
+    body::after {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        pointer-events: none;
+        content: '';
+    }
+
+    body::before {
+        background-image:
+            radial-gradient(
+                circle at center,
+                transparent 48%,
+                rgb(0 0 0 / 36%) 100%
+            ),
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 2px,
+                rgb(0 0 0 / 28%) 2px,
+                rgb(0 0 0 / 28%) 3px
+            );
+    }
+
+    body::after {
+        background: repeating-linear-gradient(
+            90deg,
+            rgb(255 0 0 / 2.5%) 0,
+            rgb(255 0 0 / 2.5%) 1px,
+            rgb(0 255 0 / 1.5%) 1px,
+            rgb(0 255 0 / 1.5%) 2px,
+            rgb(0 80 255 / 2.5%) 2px,
+            rgb(0 80 255 / 2.5%) 3px
+        );
+    }
+
+    ::selection {
+        background: #c94b4b;
+        color: #0d0d0d;
+    }
+
+    :focus-visible {
+        outline: 2px solid #e26666;
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    .retro-page {
+        @apply relative isolate min-h-screen text-[#dedada];
+    }
+
+    .retro-page::before {
+        @apply pointer-events-none fixed inset-0 z-[1] bg-black/40;
+        content: '';
+    }
+
+    .retro-page > :not(.retro-background) {
+        @apply relative z-10;
+    }
+
+    .retro-background {
+        @apply pointer-events-none fixed inset-0 z-0 h-screen w-screen object-fill;
+        user-select: none;
+    }
+
+    .retro-container {
+        @apply mx-auto w-full max-w-[1180px] px-2 sm:px-3;
+    }
+
+    .retro-panel {
+        @apply border-3 border-double border-[#604747] bg-black;
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 5%),
+            3px 3px 0 #050404;
+    }
+
+    .retro-heading {
+        @apply bg-[#5f2020] px-2 py-1.5 text-[11px] font-bold tracking-wide text-white uppercase;
+        border-top: 1px solid #a85656;
+        border-right: 1px solid #281010;
+        border-bottom: 2px solid #281010;
+        border-left: 1px solid #a85656;
+        text-shadow: 1px 1px #000;
+    }
+
+    .retro-link {
+        @apply text-[#e26666] hover:text-[#ffb0b0] hover:underline;
+    }
+
+    .retro-input {
+        @apply w-full rounded-sm border border-[#554949] bg-[#0d0c0c] px-3 py-2 text-[#e8e3e3] outline-none placeholder:text-[#786f6f] focus:border-[#c94b4b] focus:ring-0;
+    }
+
+    .pixel-title {
+        font-family: 'DotGothic16', 'MS Gothic', monospace;
+        letter-spacing: 0.04em;
+    }
+
+    .da-button {
+        @apply rounded-none bg-[#321b1b] px-3 py-1.5 text-xs font-bold text-[#eee8e8] hover:bg-[#482222] disabled:cursor-not-allowed disabled:opacity-30;
+        border-top: 1px solid #8c4b4b;
+        border-right: 1px solid #180b0b;
+        border-bottom: 1px solid #180b0b;
+        border-left: 1px solid #8c4b4b;
+        text-shadow: 0 1px #000;
+    }
+
+    .press-tab {
+        @apply bg-[#4a2424] px-3 py-1.5 font-bold text-[#eee8e8] hover:bg-[#612c2c];
+        border-top: 1px solid #9b5050;
+        border-right: 1px solid #1d0d0d;
+        border-left: 1px solid #9b5050;
+        box-shadow: inset 1px 1px rgb(255 255 255 / 5%);
+    }
+
+    .retro-new {
+        @apply ml-2 inline-block border border-[#c75d5d] bg-[#8f1f1f] px-1 py-px text-[9px] font-bold text-white;
+        animation: retro-blink 0.9s step-end infinite;
+    }
+
+    .news-ticker {
+        @apply overflow-hidden border border-[#5b4545] bg-black py-2;
+    }
+
+    .news-ticker__text {
+        display: inline-block;
+        min-width: max-content;
+        padding-left: 100%;
+        color: transparent;
+        white-space: nowrap;
+        background-image: linear-gradient(
+            90deg,
+            #ff4b4b,
+            #ffb84b,
+            #fff34b,
+            #55e36c,
+            #55cfff,
+            #7d6cff,
+            #f05cff,
+            #ff4b4b
+        );
+        background-size: 300% 100%;
+        background-clip: text;
+        text-shadow: 0 0 8px rgb(255 255 255 / 20%);
+        animation:
+            news-ticker-scroll 30s linear infinite,
+            news-ticker-rainbow 2.5s linear infinite;
+    }
+
+    .news-ticker__item {
+        @apply mr-32 inline-block;
+    }
+
+    .visitor-counter {
+        @apply inline-block border border-[#776d3d] bg-black px-2 py-0.5 text-[#ffe66b];
+        font-family: 'DotGothic16', monospace;
+        letter-spacing: 0.18em;
+        box-shadow: inset 0 0 6px rgb(255 230 107 / 20%);
+    }
+
+    .markdown-body {
+        @apply text-base leading-8 text-[#d7d7d7] md:text-lg;
+    }
+
+    .markdown-body h1 {
+        @apply mt-8 mb-4 border-b border-[#604747] pb-2 text-3xl font-bold text-white;
+    }
+
+    .markdown-body h2 {
+        @apply mt-8 mb-4 border-l-4 border-[#9b3c3c] pl-3 text-2xl font-bold text-white;
+    }
+
+    .markdown-body h3 {
+        @apply mt-6 mb-3 text-xl font-bold text-[#eee8e8];
+    }
+
+    .markdown-body p,
+    .markdown-body ul,
+    .markdown-body ol,
+    .markdown-body blockquote,
+    .markdown-body pre {
+        @apply mb-5;
+    }
+
+    .markdown-body ul {
+        @apply pl-6;
+        list-style-type: square;
+    }
+
+    .markdown-body ol {
+        @apply list-decimal pl-6;
+    }
+
+    .markdown-body a {
+        @apply text-[#e26666] underline hover:text-[#ffb0b0];
+    }
+
+    .markdown-body blockquote {
+        @apply border-l-4 border-[#604747] bg-[#171313] px-4 py-2 text-[#aaa1a1];
+    }
+
+    .markdown-body code {
+        @apply border border-[#493838] bg-[#171313] px-1.5 py-0.5 font-mono text-sm text-[#ffb0b0];
+    }
+
+    .markdown-body pre {
+        @apply overflow-x-auto border border-[#493838] bg-[#0a0909] p-4;
+    }
+
+    .markdown-body pre code {
+        @apply border-0 bg-transparent p-0 text-[#e8e3e3];
+    }
+
+    .markdown-body img {
+        @apply my-6 max-w-full border border-[#604747];
+    }
+
+    .markdown-body hr {
+        @apply my-8 border-[#604747];
+    }
+}
+
+@keyframes news-ticker-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes news-ticker-rainbow {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 300% 0;
+    }
+}
+
+@keyframes retro-blink {
+    50% {
+        opacity: 0.25;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .news-ticker__text {
+        padding-left: 0;
+        white-space: normal;
+        animation: none;
+    }
+
+    .retro-new {
+        animation: none;
+    }
+}
+
+@media (width < 640px) {
+    body::before {
+        opacity: 0.72;
+    }
+
+    body::after {
+        opacity: 0.6;
     }
 }

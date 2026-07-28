@@ -1,6 +1,5 @@
-import React from 'react'
+import Navbar from '@/components/layout/Navbar';
 import PostsSection from '@/components/layout/PostsSection';
-import Navbar from '@/components/layout/Navbar'; // ナビバーもついでに入れましょう！
 
 interface Post {
     id: number;
@@ -10,22 +9,23 @@ interface Post {
     created_at: string;
 }
 
-// Controllerから送られてくるデータの型を定義
 interface Props {
     Posts: Post[];
 }
 
-// 関数のカッコの中で { latestPosts } を受け取る！
 function Posts({ Posts }: Props) {
     return (
-        <div>
+        <div className="retro-page">
             <Navbar />
-            <div className="py-12">
-                <h1 className="text-center text-3xl font-bold mb-8">記事一覧</h1>
+            <main className="retro-container py-5">
+                <div className="mb-4 border border-[#3e3232] bg-black px-3 py-2 text-[11px] text-[#918686]">
+                    <span className="text-[#e26666]">IKEHARA PRESS</span> / NEWS
+                    ARCHIVE
+                </div>
                 <PostsSection posts={Posts} />
-            </div>
+            </main>
         </div>
-    )
+    );
 }
 
-export default Posts
+export default Posts;

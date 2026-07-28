@@ -1,12 +1,19 @@
-import { useForm } from '@inertiajs/react'
-import React, { useState } from 'react'
+import { useForm } from '@inertiajs/react';
+import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
+import MarkdownEditor from '@/components/markdown-editor';
+import { store } from '@/routes/posts';
 
 function PostCreate() {
-
     const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
 
-    const { data, setData, post } = useForm({
+    const {
+        data,
+        setData,
+        submit: submitForm,
+        processing,
+        errors,
+    } = useForm({
         title: '',
         category: '',
         content: '',
@@ -14,45 +21,62 @@ function PostCreate() {
 
     const submit = (e: React.SyntheticEvent) => {
         e.preventDefault();
-        post('/posts');
+        submitForm(store());
     };
 
     return (
         // 全体の背景と中央寄せ
-        <div>
+        <div className="retro-page">
             <Navbar />
-            <div className="min-h-screen bg-gray-50 py-12 px-4">
-                <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-8 border-b pb-4">ブログを作成</h1>
+            <div className="retro-container py-10">
+                <div className="retro-panel mx-auto max-w-4xl p-5 sm:p-8">
+                    <h1 className="retro-heading mb-8 text-2xl text-white">
+                        ■ 記事を書く
+                    </h1>
 
                     <form onSubmit={submit} className="space-y-6">
                         {/* タイトル入力 */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">タイトル</label>
+                            <label className="mb-2 block text-xs font-bold text-[#f0ebeb]">
+                                タイトル:
+                            </label>
                             <input
                                 type="text"
                                 value={data.title}
-                                onChange={(e) => setData('title', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                onChange={(e) =>
+                                    setData('title', e.target.value)
+                                }
+                                className="retro-input"
                                 placeholder="記事のタイトルを入力..."
                             />
+                            {errors.title && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.title}
+                                </p>
+                            )}
                         </div>
 
                         {/* カテゴリーセクション */}
                         <div>
-                            <div className="flex justify-between items-center mb-1">
-                                <label className="block text-sm font-medium text-gray-700">カテゴリー</label>
+                            <div className="mb-1 flex items-center justify-between">
+                                <label className="block text-xs font-bold text-[#f0ebeb]">
+                                    カテゴリー:
+                                </label>
 
                                 {/* モード切替ボタン */}
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setIsAddingNewCategory(!isAddingNewCategory);
+                                        setIsAddingNewCategory(
+                                            !isAddingNewCategory,
+                                        );
                                         setData('category', ''); // モードを変えたら一度リセット
                                     }}
-                                    className="text-xs text-blue-600 hover:underline"
+                                    className="retro-link text-xs"
                                 >
-                                    {isAddingNewCategory ? '選択に戻る' : '新しく作る'}
+                                    {isAddingNewCategory
+                                        ? '選択に戻る'
+                                        : '新しく作る'}
                                 </button>
                             </div>
 
@@ -61,8 +85,10 @@ function PostCreate() {
                                 <input
                                     type="text"
                                     value={data.category}
-                                    onChange={(e) => setData('category', e.target.value)}
-                                    className="w-full px-4 py-2 border border-blue-300 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    onChange={(e) =>
+                                        setData('category', e.target.value)
+                                    }
+                                    className="retro-input"
                                     placeholder="新しいカテゴリー名を入力..."
                                     autoFocus
                                 />
@@ -70,39 +96,50 @@ function PostCreate() {
                                 // 【選択モード】
                                 <select
                                     value={data.category}
-                                    onChange={(e) => setData('category', e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    onChange={(e) =>
+                                        setData('category', e.target.value)
+                                    }
+                                    className="retro-input"
                                 >
                                     <option value="">選択してください</option>
                                     <option value="テック">テック</option>
                                     <option value="日常">日常</option>
                                 </select>
                             )}
+                            {errors.category && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.category}
+                                </p>
+                            )}
                         </div>
 
                         {/* 本文入力 */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">本文</label>
-                            <textarea
+                            <label className="mb-2 block text-xs font-bold text-[#f0ebeb]">
+                                本文（Markdown）:
+                            </label>
+                            <MarkdownEditor
                                 value={data.content}
-                                onChange={(e) => setData('content', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg h-48 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="ここへ内容を書きましょう"
+                                onChange={(content) =>
+                                    setData('content', content)
+                                }
+                                error={errors.content}
                             />
                         </div>
 
                         {/* 投稿ボタン */}
                         <button
-                            type='submit'
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition-colors duration-200 active:scale-[0.98]"
+                            type="submit"
+                            disabled={processing}
+                            className="da-button w-full py-3 disabled:opacity-50"
                         >
-                            投稿する
+                            {processing ? '投稿中...' : '投稿する'}
                         </button>
                     </form>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default PostCreate
+export default PostCreate;

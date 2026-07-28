@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Support\MarkdownRenderer;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Post;
+use Inertia\Response;
 
 class PostController extends Controller
 {
@@ -14,11 +17,11 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::latest()->get();
+
         return Inertia::render('Posts', [
-            'Posts' => $posts
+            'Posts' => $posts,
         ]);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -50,12 +53,16 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
-    {
+    public function show(
+        Post $post,
+        MarkdownRenderer $markdownRenderer,
+    ): Response {
         $post->load('comments');
+        $postData = $post->toArray();
+        $postData['content_html'] = $markdownRenderer->render($post->content);
 
         return inertia('PostShow', [
-            'post' => $post
+            'post' => $postData,
         ]);
     }
 
@@ -65,14 +72,14 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         return inertia('PostEdit', [
-            'post' => $post
+            'post' => $post,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, Post $post): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|max:255',
@@ -80,11 +87,9 @@ class PostController extends Controller
             'content' => 'required',
         ]);
 
-        // 2. データベースに保存
-        Post::create($validated);
+        $post->update($validated);
 
-        // 3. 一覧ページに戻る
-        return redirect()->route('posts.index');
+        return redirect()->route('posts.show', $post);
     }
 
     /**
@@ -93,6 +98,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
+
         return redirect()->route('posts.index');
     }
 }

@@ -1,32 +1,43 @@
-import React from 'react'
-import PostCard from '../ui/PostCard'
+import PostCard from '../ui/PostCard';
 
 interface LatestPostsSectionProps {
-  posts: Array<{  // ここを posts に修正
-   id: number;
-    title: string;
-    content: string;
-    category: string;
-    created_at: string; 
-  }>
+    posts: Array<{
+        id: number;
+        title: string;
+        content: string;
+        category: string;
+        created_at: string;
+    }>;
 }
 
-// 引数の後ろは「:」で型を指定する
 function LatestPostsSection({ posts }: LatestPostsSectionProps) {
-  return (
-    <section className="max-w-6xl mx-auto py-12 px-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center">
-        <span className="bg-blue-500 w-2 h-8 mr-3 rounded-full"></span>
-        新着記事
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {posts.slice(0, 6).map((posts) => (
-          <PostCard key={posts.id} post={posts} />
-        ))}
-      </div>
-    </section>
-  )
+    return (
+        <section className="retro-panel">
+            <div className="retro-heading flex items-center justify-between">
+                <h2>LATEST NEWS</h2>
+                <span className="font-normal text-[#9e9292] normal-case">
+                    latest 6 entries
+                </span>
+            </div>
+            <div className="divide-y divide-[#413535] px-4">
+                {posts.length > 0 ? (
+                    posts
+                        .slice(0, 6)
+                        .map((post, index) => (
+                            <PostCard
+                                key={post.id}
+                                post={post}
+                                isNew={index === 0}
+                            />
+                        ))
+                ) : (
+                    <p className="py-8 text-center text-xs text-[#887e7e]">
+                        No entries have been published.
+                    </p>
+                )}
+            </div>
+        </section>
+    );
 }
 
-export default LatestPostsSection
+export default LatestPostsSection;

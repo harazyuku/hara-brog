@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
-use Inertia\Inertia;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\MarkdownPreviewController;
+use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Route;
 
 // web.php
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -15,12 +14,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // 投稿CRUD
 Route::resource('posts', PostController::class);
 
+Route::post('markdown/preview', MarkdownPreviewController::class)->name('markdown.preview');
+
 // コメント投稿
-Route::post('posts/{post}/comments', [App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
+Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 
 // トップページ
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 require __DIR__.'/settings.php';
-
-

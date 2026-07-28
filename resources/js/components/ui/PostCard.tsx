@@ -1,8 +1,8 @@
 import { Link, router } from '@inertiajs/react';
-import React from 'react';
-import { Trash2, Edit } from 'lucide-react';
+import type React from 'react';
 
 interface PostCardProps {
+    isNew?: boolean;
     post: {
         id: number;
         title: string;
@@ -12,7 +12,7 @@ interface PostCardProps {
     }
 }
 
-function PostCard({ post }: PostCardProps) {
+function PostCard({ isNew = false, post }: PostCardProps) {
     const handleDelete = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -28,50 +28,34 @@ function PostCard({ post }: PostCardProps) {
     };
 
     return (
-        <div className="group relative bg-white border border-gray-100 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-            {/* 全面リンク */}
-            <Link
-                href={`/posts/${post.id}`}
-                className="absolute inset-0 z-0 rounded-xl"
-            >
-                <span className="sr-only">詳細を見る</span>
-            </Link>
-
-            <div className="flex justify-between items-start mb-2">
-                {/* カテゴリー */}
-                <span className="relative z-10 inline-block bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none">
-                    {post.category}
-                </span>
-
-                {/* アクションアイコン（右上に集約・ホバーで表示） */}
-                <div className="relative z-20 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                        onClick={handleEdit}
-                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all"
-                        title="編集"
-                    >
-                        <Edit size={14} />
+        <article className="group grid gap-2 py-3 sm:grid-cols-[56px_minmax(0,1fr)]">
+            <div className="hidden h-12 w-12 place-items-center border-3 border-double border-[#624747] bg-[#110e0e] text-xl text-[#b84b4b] sm:grid">
+                {post.title.slice(0, 1)}
+            </div>
+            <div className="min-w-0">
+                <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-[#887e7e]">
+                    <span className="border border-[#573f3f] bg-[#302222] px-1.5 py-0.5 text-[#e08a8a]">
+                        {post.category}
+                    </span>
+                    <time>{post.created_at}</time>
+                </div>
+                <h3 className="mb-1 truncate text-sm font-bold">
+                    <Link href={`/posts/${post.id}`} className="retro-link">
+                        {post.title}
+                    </Link>
+                    {isNew && <span className="retro-new">NEW!</span>}
+                </h3>
+                <p className="line-clamp-2 text-xs leading-5 text-[#aaa1a1]">{post.content}</p>
+                <div className="mt-2 flex gap-2">
+                    <button type="button" onClick={handleEdit} className="da-button">
+                        Edit
                     </button>
-                    <button
-                        onClick={handleDelete}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
-                        title="削除"
-                    >
-                        <Trash2 size={14} />
+                    <button type="button" onClick={handleDelete} className="da-button text-[#d8b6b6]">
+                        Delete
                     </button>
                 </div>
             </div>
-
-            {/* タイトルと日付 */}
-            <div className="relative z-10 pointer-events-none">
-                <h3 className="font-bold text-gray-900 text-sm leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">
-                    {post.title}
-                </h3>
-                <p className="text-gray-400 text-[9px] mt-1">
-                    {post.created_at}
-                </p>
-            </div>
-        </div>
+        </article>
     );
 }
 
