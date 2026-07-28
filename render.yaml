@@ -14,7 +14,7 @@ services:
         sync: false # Renderが割り当てるURLを後で設定
       - key: DB_CONNECTION
         value: pgsql
-      - key: DATABASE_URL
+      - key: DB_URL
         fromDatabase:
           name: my-blog-db
           property: connectionString

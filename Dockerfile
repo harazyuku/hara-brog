@@ -32,8 +32,6 @@ RUN composer install --no-interaction --no-dev --optimize-autoloader
 # ビルド用環境変数の徹底
 ENV APP_ENV=production
 ENV APP_KEY=base64:j2FzWZip07EHE+ZpQDB30wtXvhQ7orNHTpxei1780XE=
-ENV DB_CONNECTION=sqlite
-ENV DB_DATABASE=/var/www/html/database/database.sqlite
 RUN mkdir -p database && touch database/database.sqlite
 ENV NODE_OPTIONS=--max-old-space-size=400
 ENV PORT=80
@@ -42,10 +40,10 @@ ENV PORT=80
 RUN npm install --no-audit --no-fund
 
 # ビルド前に型生成を試みる（ここでエラーが出ればログに理由が表示されます）
-RUN php artisan wayfinder:generate --with-form
+RUN DB_CONNECTION=sqlite DB_DATABASE=/var/www/html/database/database.sqlite php artisan wayfinder:generate --with-form
 
 # Viteビルド
-RUN npm run build
+RUN DB_CONNECTION=sqlite DB_DATABASE=/var/www/html/database/database.sqlite npm run build
 
 # Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
