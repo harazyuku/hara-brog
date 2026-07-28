@@ -7,8 +7,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
 
 # Install system dependencies (Full set for Laravel 13)
 RUN apt-get update && apt-get install -y \
-    libpng-dev libxml2-dev libzip-dev libpq-dev libonig-dev libicu-dev libsqlite3-dev unzip git curl \
+    libjpeg62-turbo-dev libpng-dev libwebp-dev libxml2-dev libzip-dev libpq-dev libonig-dev libicu-dev libsqlite3-dev unzip git curl \
     && docker-php-ext-configure intl \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install pdo_mysql pdo_pgsql pdo_sqlite gd zip opcache intl bcmath mbstring \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

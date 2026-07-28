@@ -1,6 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
+import InlineGif from '@/components/inline-gif';
 import LatestPostsSection from '@/components/layout/LatestPostsSection';
 import Navbar from '@/components/layout/Navbar';
+import VisitorCounter from '@/components/VisitorCounter';
 
 interface Post {
     id: number;
@@ -8,13 +10,15 @@ interface Post {
     content: string;
     category: string;
     created_at: string;
+    has_icon: boolean;
 }
 
 interface HomeProps {
     latestPosts: Post[];
+    visitorNumber: number;
 }
 
-export default function Home({ latestPosts }: HomeProps) {
+export default function Home({ latestPosts, visitorNumber }: HomeProps) {
     return (
         <>
             <Head title="IKEHARA PRESS" />
@@ -58,23 +62,41 @@ export default function Home({ latestPosts }: HomeProps) {
                             <section className="retro-panel">
                                 <h2 className="retro-heading">DEVELOPMENT</h2>
                                 <ul className="space-y-2 p-3 text-xs text-[#b5abab]">
-                                    <li>
-                                        <span className="text-[#d45353]">
-                                            ›
-                                        </span>{' '}
-                                        PHP / Laravel
+                                    <li className="flex min-h-6 items-center justify-between gap-3">
+                                        <span>
+                                            <span className="text-[#d45353]">
+                                                ›
+                                            </span>{' '}
+                                            PHP / Laravel
+                                        </span>
+                                        <InlineGif
+                                            src="/images/icon-laravel-pixel.svg"
+                                            className="retro-float-icon size-5"
+                                        />
                                     </li>
-                                    <li>
-                                        <span className="text-[#d45353]">
-                                            ›
-                                        </span>{' '}
-                                        TypeScript / React
+                                    <li className="flex min-h-6 items-center justify-between gap-3">
+                                        <span>
+                                            <span className="text-[#d45353]">
+                                                ›
+                                            </span>{' '}
+                                            TypeScript / React
+                                        </span>
+                                        <InlineGif
+                                            src="/images/icon-react-pixel.svg"
+                                            className="retro-float-icon size-5 [animation-delay:-.35s]"
+                                        />
                                     </li>
-                                    <li>
-                                        <span className="text-[#d45353]">
-                                            ›
-                                        </span>{' '}
-                                        Inertia.js
+                                    <li className="flex min-h-6 items-center justify-between gap-3">
+                                        <span>
+                                            <span className="text-[#d45353]">
+                                                ›
+                                            </span>{' '}
+                                            Inertia.js
+                                        </span>
+                                        <InlineGif
+                                            src="/images/icon-inertia-pixel.svg"
+                                            className="retro-float-icon size-5 [animation-delay:-.7s]"
+                                        />
                                     </li>
                                 </ul>
                             </section>
@@ -83,20 +105,28 @@ export default function Home({ latestPosts }: HomeProps) {
                                 <h2 className="retro-heading">QUICK LINKS</h2>
                                 <div className="flex flex-col gap-2 p-3 text-xs">
                                     <a
-                                        href="https://github.com/harazyuku/my-portfolio"
-                                        className="retro-link"
+                                        href="https://github.com/harazyuku"
+                                        className="retro-link flex min-h-6 items-center justify-between gap-3"
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        MY PORTFOLIO
+                                        <span>MY GitHub</span>
+                                        <InlineGif
+                                            src="/images/icon-github-pixel.svg"
+                                            className="retro-float-icon size-5 [animation-delay:-1.05s]"
+                                        />
                                     </a>
                                     <a
                                         href="https://github.com/harazyuku/hara-brog"
-                                        className="retro-link"
+                                        className="retro-link flex min-h-6 items-center justify-between gap-3"
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        SOURCE
+                                        <span>SOURCE</span>
+                                        <InlineGif
+                                            src="/images/icon-source-pixel.svg"
+                                            className="retro-float-icon size-5 [animation-delay:-1.4s]"
+                                        />
                                     </a>
                                 </div>
                             </section>
@@ -130,9 +160,11 @@ export default function Home({ latestPosts }: HomeProps) {
                                     </div>
                                     <p className="text-left text-xs text-[#b5abab]">
                                         あなたは{' '}
-                                        <span className="visitor-counter">
-                                            000023
-                                        </span>{' '}
+                                        <VisitorCounter
+                                            value={visitorNumber
+                                                .toString()
+                                                .padStart(6, '0')}
+                                        />{' '}
                                         人目の訪問者です。
                                     </p>
                                 </div>
@@ -144,6 +176,8 @@ export default function Home({ latestPosts }: HomeProps) {
 
                 <footer className="w-full border-t-3 border-double border-[#5d4141] bg-black px-3 py-4 text-center text-[10px] leading-5 text-[#706767]">
                     推奨環境：1024×768以上 / JavaScript ON
+                    <br />
+                    無断転載禁止！リンクはご自由にどうぞ。管理人：池原優斗
                     <br />
                     IKEHARA PRESS © 2026 · Powered by Laravel &amp; React
                 </footer>

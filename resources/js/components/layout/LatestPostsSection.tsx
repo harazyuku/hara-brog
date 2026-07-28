@@ -7,6 +7,7 @@ interface LatestPostsSectionProps {
         content: string;
         category: string;
         created_at: string;
+        has_icon: boolean;
     }>;
 }
 
@@ -14,7 +15,7 @@ function LatestPostsSection({ posts }: LatestPostsSectionProps) {
     return (
         <section className="retro-panel">
             <div className="retro-heading flex items-center justify-between">
-                <h2>LATEST NEWS</h2>
+                <h2>最新記事</h2>
                 <span className="font-normal text-[#9e9292] normal-case">
                     latest 6 entries
                 </span>

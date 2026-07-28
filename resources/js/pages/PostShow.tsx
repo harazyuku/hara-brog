@@ -123,7 +123,7 @@ export default function PostShow({ post }: PostShowProps) {
                     </div>
 
                     {/* コメントセクション */}
-                    <section className="mt-12">
+                    <section id="comments" className="mt-12 scroll-mt-4">
                         <h2 className="retro-heading mb-4 flex items-center gap-2">
                             ■ BBS / コメント
                             <span className="text-[10px] text-[#9e9292]">

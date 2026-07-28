@@ -1,6 +1,10 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { login, logout } from '@/routes';
+import { create, index } from '@/routes/posts';
 
 function Navbar() {
+    const { auth } = usePage().props;
+
     return (
         <>
             <img
@@ -12,20 +16,35 @@ function Navbar() {
             />
             <header className="border-y border-[#3b3030] border-t-[#8f2d2d] bg-black text-xs">
                 <div className="retro-container">
-                    <div className="flex min-h-14 flex-col justify-center gap-2 border-x border-[#332828] px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex min-h-20 flex-col justify-center gap-2 border-x border-[#332828] px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                         <Link
                             href="/"
                             className="pixel-title group flex w-fit items-center gap-2 text-2xl text-[#f0ebeb]"
                         >
-                            <span className="grid h-8 w-8 place-items-center border border-[#804949] bg-[#392525] text-[#e26666] group-hover:bg-[#4a2c2c]">
-                                I
-                            </span>
+                            <img
+                                src="/images/mario-dancing.gif"
+                                alt=""
+                                aria-hidden="true"
+                                className="h-16 w-auto object-contain"
+                            />
                             IKEHARA{' '}
                             <span className="text-[#d45353]">PRESS</span>
                         </Link>
-                        <p className="hidden text-[#898080] sm:block">
-                            personal news &amp; development journal
-                        </p>
+                        <div className="hidden items-center gap-3 sm:flex">
+                            <div className="text-right">
+                                <p className="retro-blink text-[#d8b66b]">
+                                    ☆ WELCOME TO MY HOMEPAGE ☆
+                                </p>
+                                <p className="text-[9px] text-[#898080]">
+                                    personal news &amp; development journal
+                                </p>
+                            </div>
+                            <img
+                                src="/images/retro-tech-decoration.gif"
+                                alt="パソコンの周りをLaravel、React、TypeScriptのロゴが回るレトロGIF"
+                                className="h-12 w-auto max-w-36 object-contain"
+                            />
+                        </div>
                     </div>
                     <nav
                         className="-mb-px flex flex-wrap items-end gap-px border-x border-t border-[#3f3030] px-1 pt-1"
@@ -34,12 +53,27 @@ function Navbar() {
                         <Link href="/" className="press-tab">
                             ホーム
                         </Link>
-                        <Link href="/posts" className="press-tab">
+                        <Link href={index()} className="press-tab">
                             記事一覧
                         </Link>
-                        <Link href="/posts/create" className="press-tab">
-                            投稿する
-                        </Link>
+                        {auth.user?.is_admin && (
+                            <Link href={create()} className="press-tab">
+                                投稿する
+                            </Link>
+                        )}
+                        {auth.user ? (
+                            <Link
+                                href={logout()}
+                                as="button"
+                                className="press-tab"
+                            >
+                                ログアウト
+                            </Link>
+                        ) : (
+                            <Link href={login()} className="press-tab">
+                                管理者ログイン
+                            </Link>
+                        )}
                         <span className="ml-auto hidden pb-2 text-[10px] text-[#766d6d] md:block">
                             STATUS: ONLINE
                         </span>

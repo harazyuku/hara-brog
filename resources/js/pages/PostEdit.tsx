@@ -3,7 +3,8 @@ import { ArrowLeft, Save, Tag, FileText, Plus, List } from 'lucide-react';
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import MarkdownEditor from '@/components/markdown-editor';
-import { show, update } from '@/routes/posts';
+import PostIconField from '@/components/post-icon-field';
+import { icon, show, update } from '@/routes/posts';
 
 interface PostEditProps {
     post: {
@@ -12,7 +13,15 @@ interface PostEditProps {
         content: string;
         category: string;
         created_at: string;
+        has_icon: boolean;
     };
+}
+
+interface PostForm {
+    category: string;
+    content: string;
+    icon: File | null;
+    title: string;
 }
 
 export default function PostEdit({ post }: PostEditProps) {
@@ -24,16 +33,22 @@ export default function PostEdit({ post }: PostEditProps) {
         setData,
         submit: submitForm,
         processing,
+        progress,
         errors,
-    } = useForm({
+    } = useForm<PostForm>({
         title: post.title,
         content: post.content,
         category: post.category,
+        icon: null,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        submitForm(update(post.id));
+        const updateRoute = update.form(post.id);
+
+        submitForm(updateRoute.method, updateRoute.action, {
+            forceFormData: true,
+        });
     };
 
     return (
@@ -59,7 +74,7 @@ export default function PostEdit({ post }: PostEditProps) {
                             {/* カテゴリー選択 */}
                             <div className="mb-6">
                                 <div className="mb-2 flex items-center justify-between">
-                                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#f0ebeb]">
+                                    <label className="flex items-center gap-2 text-xs font-bold tracking-wide text-[#f0ebeb] uppercase">
                                         <Tag size={14} />
                                         カテゴリー
                                     </label>
@@ -132,7 +147,7 @@ export default function PostEdit({ post }: PostEditProps) {
 
                             {/* タイトル入力 */}
                             <div className="mb-8">
-                                <label className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#f0ebeb]">
+                                <label className="mb-2 flex items-center gap-2 text-xs font-bold tracking-wide text-[#f0ebeb] uppercase">
                                     <FileText size={14} />
                                     タイトル
                                 </label>
@@ -152,9 +167,22 @@ export default function PostEdit({ post }: PostEditProps) {
                                 )}
                             </div>
 
+                            <div className="mb-8">
+                                <PostIconField
+                                    value={data.icon}
+                                    currentImageUrl={
+                                        post.has_icon
+                                            ? icon(post.id).url
+                                            : undefined
+                                    }
+                                    onChange={(file) => setData('icon', file)}
+                                    error={errors.icon}
+                                />
+                            </div>
+
                             {/* 本文入力 */}
                             <div>
-                                <label className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#f0ebeb]">
+                                <label className="mb-2 flex items-center gap-2 text-xs font-bold tracking-wide text-[#f0ebeb] uppercase">
                                     本文
                                 </label>
                                 <MarkdownEditor
@@ -167,6 +195,20 @@ export default function PostEdit({ post }: PostEditProps) {
                                 />
                             </div>
                         </div>
+
+                        {progress && (
+                            <div>
+                                <div className="mb-1 flex justify-between text-[10px] text-[#887e7e]">
+                                    <span>画像を送信中...</span>
+                                    <span>{progress.percentage}%</span>
+                                </div>
+                                <progress
+                                    value={progress.percentage}
+                                    max="100"
+                                    className="h-2 w-full accent-[#a33b3b]"
+                                />
+                            </div>
+                        )}
 
                         <div className="flex justify-end">
                             <button

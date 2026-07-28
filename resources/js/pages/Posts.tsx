@@ -7,6 +7,7 @@ interface Post {
     content: string;
     category: string;
     created_at: string;
+    has_icon: boolean;
 }
 
 interface Props {

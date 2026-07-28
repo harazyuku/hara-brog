@@ -7,6 +7,7 @@ interface PostsSectionProps {
         content: string;
         category: string;
         created_at: string;
+        has_icon: boolean;
     }>;
 }
 

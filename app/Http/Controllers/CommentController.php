@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Comment;
 use App\Models\Post;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
 {
@@ -27,7 +28,7 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Post $post)
+    public function store(Request $request, Post $post): Response
     {
         $validated = $request->validate([
             'name' => 'max:10',
@@ -38,7 +39,9 @@ class CommentController extends Controller
 
         $post->comments()->create($validated);
 
-        return back();
+        return Inertia::location(
+            route('posts.show', $post, absolute: false).'#comments',
+        );
     }
 
     /**

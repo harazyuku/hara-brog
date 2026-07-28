@@ -306,6 +306,16 @@
         animation: retro-blink 0.9s step-end infinite;
     }
 
+    .retro-blink {
+        animation: retro-blink 1s step-end infinite;
+    }
+
+    .retro-float-icon {
+        filter: drop-shadow(1px 1px 0 #000)
+            drop-shadow(0 0 2px rgb(226 102 102 / 28%));
+        animation: retro-icon-float 1.8s steps(3, end) infinite;
+    }
+
     .news-ticker {
         @apply overflow-hidden border border-[#5b4545] bg-black py-2;
     }
@@ -340,10 +350,39 @@
     }
 
     .visitor-counter {
-        @apply inline-block border border-[#776d3d] bg-black px-2 py-0.5 text-[#ffe66b];
+        @apply inline-flex items-center gap-px border border-[#797979] bg-[#242424] p-0.5 align-middle;
         font-family: 'DotGothic16', monospace;
-        letter-spacing: 0.18em;
-        box-shadow: inset 0 0 6px rgb(255 230 107 / 20%);
+        box-shadow:
+            inset 1px 1px #b9b9b9,
+            inset -1px -1px #080808,
+            1px 1px 0 #000;
+    }
+
+    .visitor-counter__digit {
+        display: grid;
+        width: 1.05em;
+        height: 1.45em;
+        place-items: center;
+        border-right: 1px solid #111;
+        border-left: 1px solid #3c3c2d;
+        color: #fff36a;
+        font-size: 1.1em;
+        line-height: 1;
+        text-shadow:
+            0 0 3px rgb(255 230 65 / 75%),
+            1px 1px 0 #5b5200;
+        background:
+            linear-gradient(
+                to bottom,
+                rgb(255 255 255 / 8%),
+                transparent 42%,
+                rgb(0 0 0 / 55%) 50%,
+                transparent 58%
+            ),
+            #080900;
+        box-shadow:
+            inset 0 1px 3px #000,
+            inset 0 -1px 2px rgb(255 243 106 / 12%);
     }
 
     .markdown-body {
@@ -434,6 +473,23 @@
     }
 }
 
+@keyframes retro-icon-float {
+    0%,
+    100% {
+        transform: translateY(2px);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .retro-float-icon {
+        animation: none;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .news-ticker__text {
         padding-left: 0;
@@ -442,6 +498,10 @@
     }
 
     .retro-new {
+        animation: none;
+    }
+
+    .retro-blink {
         animation: none;
     }
 }

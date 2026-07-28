@@ -1,12 +1,15 @@
 <?php
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
 test('markdown preview returns safe html', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
     $response = $this->postJson(route('markdown.preview'), [
         'content' => "# 見出し\n\n**太字**\n\n<script>alert('xss')</script>\n\n[危険](javascript:alert('xss'))",
     ]);
@@ -35,7 +38,33 @@ test('post page receives rendered markdown while preserving source', function ()
         );
 });
 
+test('post page displays newest comments first', function () {
+    $post = Post::query()->create([
+        'title' => 'コメント順の記事',
+        'category' => '日常',
+        'content' => '本文です。',
+    ]);
+
+    $olderComment = $post->comments()->create([
+        'name' => '最初の人',
+        'content' => '古いコメント',
+    ]);
+    $newerComment = $post->comments()->create([
+        'name' => '次の人',
+        'content' => '新しいコメント',
+    ]);
+
+    $this->get(route('posts.show', $post))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('post.comments.0.id', $newerComment->id)
+            ->where('post.comments.1.id', $olderComment->id)
+        );
+});
+
 test('updating a post does not create a duplicate', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
     $post = Post::query()->create([
         'title' => '変更前',
         'category' => '日常',
@@ -46,7 +75,7 @@ test('updating a post does not create a duplicate', function () {
         'title' => '変更後',
         'category' => 'テック',
         'content' => '**変更後の本文**',
-    ])->assertRedirect(route('posts.show', $post));
+    ])->assertRedirect(route('posts.show', $post, absolute: false));
 
     expect(Post::query()->count())->toBe(1)
         ->and($post->refresh()->title)->toBe('変更後')

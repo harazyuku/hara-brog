@@ -1,5 +1,6 @@
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import type React from 'react';
+import { destroy, edit, icon, show } from '@/routes/posts';
 
 interface PostCardProps {
     isNew?: boolean;
@@ -9,28 +10,39 @@ interface PostCardProps {
         content: string;
         category: string;
         created_at: string;
-    }
+        has_icon: boolean;
+    };
 }
 
 function PostCard({ isNew = false, post }: PostCardProps) {
+    const { auth } = usePage().props;
+
     const handleDelete = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         if (confirm('この記事を削除してもよろしいですか？')) {
-            router.delete(`/posts/${post.id}`);
+            router.delete(destroy(post.id));
         }
     };
 
     const handleEdit = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        router.get(`/posts/${post.id}/edit`);
+        router.get(edit(post.id));
     };
 
     return (
         <article className="group grid gap-2 py-3 sm:grid-cols-[56px_minmax(0,1fr)]">
             <div className="hidden h-12 w-12 place-items-center border-3 border-double border-[#624747] bg-[#110e0e] text-xl text-[#b84b4b] sm:grid">
-                {post.title.slice(0, 1)}
+                {post.has_icon ? (
+                    <img
+                        src={icon(post.id).url}
+                        alt=""
+                        className="h-full w-full object-cover"
+                    />
+                ) : (
+                    post.title.slice(0, 1)
+                )}
             </div>
             <div className="min-w-0">
                 <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-[#887e7e]">
@@ -40,20 +52,32 @@ function PostCard({ isNew = false, post }: PostCardProps) {
                     <time>{post.created_at}</time>
                 </div>
                 <h3 className="mb-1 truncate text-sm font-bold">
-                    <Link href={`/posts/${post.id}`} className="retro-link">
+                    <Link href={show(post.id)} className="retro-link">
                         {post.title}
                     </Link>
                     {isNew && <span className="retro-new">NEW!</span>}
                 </h3>
-                <p className="line-clamp-2 text-xs leading-5 text-[#aaa1a1]">{post.content}</p>
-                <div className="mt-2 flex gap-2">
-                    <button type="button" onClick={handleEdit} className="da-button">
-                        Edit
-                    </button>
-                    <button type="button" onClick={handleDelete} className="da-button text-[#d8b6b6]">
-                        Delete
-                    </button>
-                </div>
+                <p className="line-clamp-2 text-xs leading-5 text-[#aaa1a1]">
+                    {post.content}
+                </p>
+                {auth.user?.is_admin && (
+                    <div className="mt-2 flex gap-2">
+                        <button
+                            type="button"
+                            onClick={handleEdit}
+                            className="da-button"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleDelete}
+                            className="da-button text-[#d8b6b6]"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                )}
             </div>
         </article>
     );

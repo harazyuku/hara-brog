@@ -2,7 +2,15 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import MarkdownEditor from '@/components/markdown-editor';
+import PostIconField from '@/components/post-icon-field';
 import { store } from '@/routes/posts';
+
+interface PostForm {
+    category: string;
+    content: string;
+    icon: File | null;
+    title: string;
+}
 
 function PostCreate() {
     const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
@@ -12,16 +20,18 @@ function PostCreate() {
         setData,
         submit: submitForm,
         processing,
+        progress,
         errors,
-    } = useForm({
+    } = useForm<PostForm>({
         title: '',
         category: '',
         content: '',
+        icon: null,
     });
 
     const submit = (e: React.SyntheticEvent) => {
         e.preventDefault();
-        submitForm(store());
+        submitForm(store(), { forceFormData: true });
     };
 
     return (
@@ -113,6 +123,12 @@ function PostCreate() {
                             )}
                         </div>
 
+                        <PostIconField
+                            value={data.icon}
+                            onChange={(file) => setData('icon', file)}
+                            error={errors.icon}
+                        />
+
                         {/* 本文入力 */}
                         <div>
                             <label className="mb-2 block text-xs font-bold text-[#f0ebeb]">
@@ -126,6 +142,20 @@ function PostCreate() {
                                 error={errors.content}
                             />
                         </div>
+
+                        {progress && (
+                            <div>
+                                <div className="mb-1 flex justify-between text-[10px] text-[#887e7e]">
+                                    <span>画像を送信中...</span>
+                                    <span>{progress.percentage}%</span>
+                                </div>
+                                <progress
+                                    value={progress.percentage}
+                                    max="100"
+                                    className="h-2 w-full accent-[#a33b3b]"
+                                />
+                            </div>
+                        )}
 
                         {/* 投稿ボタン */}
                         <button

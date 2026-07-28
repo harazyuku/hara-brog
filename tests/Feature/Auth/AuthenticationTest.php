@@ -1,13 +1,22 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
+use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Fortify\Features;
+
+uses(RefreshDatabase::class);
 
 test('login screen can be rendered', function () {
     $response = $this->get(route('login'));
 
-    $response->assertOk();
+    $response
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('auth/login')
+            ->has('canResetPassword')
+        );
 });
 
 test('users can authenticate using the login screen', function () {
@@ -19,7 +28,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('home', absolute: false));
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {
@@ -65,7 +74,49 @@ test('users can logout', function () {
     $response = $this->actingAs($user)->post(route('logout'));
 
     $this->assertGuest();
-    $response->assertRedirect(route('home'));
+    $response->assertRedirect(route('home', absolute: false));
+});
+
+test('inertia login redirects users to the home page', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->withHeaders([
+            'Accept' => 'application/json',
+            'X-Inertia' => 'true',
+        ])
+        ->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+    $this->assertAuthenticated();
+    $response
+        ->assertStatus(409)
+        ->assertHeader(
+            'X-Inertia-Location',
+            route('home', absolute: false),
+        );
+});
+
+test('inertia logout redirects users to the home page', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->withHeaders([
+            'Accept' => 'application/json',
+            'X-Inertia' => 'true',
+        ])
+        ->post(route('logout'));
+
+    $this->assertGuest();
+    $response
+        ->assertStatus(409)
+        ->assertHeader(
+            'X-Inertia-Location',
+            route('home', absolute: false),
+        );
 });
 
 test('users are rate limited', function () {
