@@ -11,6 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use RuntimeException;
 
 class PostController extends Controller
 {
@@ -120,9 +121,25 @@ class PostController extends Controller
             return;
         }
 
-        $post->forceFill([
-            'icon_data' => $postIconProcessor->process($uploadedFile),
-            'icon_mime_type' => 'image/webp',
-        ])->save();
+        $iconContents = $postIconProcessor->process($uploadedFile);
+        $iconStream = fopen('php://temp', 'w+b');
+
+        if (
+            $iconStream === false
+            || fwrite($iconStream, $iconContents) !== strlen($iconContents)
+        ) {
+            throw new RuntimeException('一覧アイコン画像を保存できませんでした。');
+        }
+
+        rewind($iconStream);
+
+        try {
+            $post->forceFill([
+                'icon_data' => $iconStream,
+                'icon_mime_type' => 'image/webp',
+            ])->save();
+        } finally {
+            fclose($iconStream);
+        }
     }
 }

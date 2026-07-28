@@ -27,9 +27,16 @@ test('a post can be created with a list icon', function () {
         ->and($post->icon_mime_type)->toBe('image/webp')
         ->and($post->has_icon)->toBeTrue();
 
-    $this->get(route('posts.icon', $post))
+    $iconResponse = $this->get(route('posts.icon', $post))
         ->assertOk()
         ->assertHeader('Content-Type', 'image/webp');
+
+    $iconContents = $iconResponse->getContent();
+
+    expect($iconContents)
+        ->toBeString()
+        ->and(strlen($iconContents))->toBeGreaterThan(6)
+        ->and(imagecreatefromstring($iconContents))->toBeInstanceOf(GdImage::class);
 });
 
 test('post lists expose the icon state without exposing image bytes', function () {
