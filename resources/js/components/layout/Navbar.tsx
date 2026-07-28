@@ -44,6 +44,17 @@ function Navbar() {
                             STATUS: ONLINE
                         </span>
                     </nav>
+                    <div className="retro-address-bar">
+                        <span className="shrink-0 text-[#e26666]">
+                            LOCATION:
+                        </span>
+                        <span className="truncate text-[#c6bebe]">
+                            /index.html
+                        </span>
+                        <span className="ml-auto hidden shrink-0 text-[#706767] sm:inline">
+                            56K MODEM / UTF-8 / JS:ON
+                        </span>
+                    </div>
                 </div>
             </header>
         </>

@@ -21,8 +21,8 @@ export default function Home({ latestPosts }: HomeProps) {
             <div className="retro-page">
                 <Navbar />
 
-                <main className="retro-container py-3">
-                    <div className="mb-4 border border-[#3e3232] bg-black px-3 py-2 text-[11px] text-[#918686]">
+                <main className="retro-container retro-site-frame py-2">
+                    <div className="retro-location mb-3">
                         <span className="text-[#e26666]">IKEHARA PRESS</span> /
                         HOME / LATEST NEWS
                         <span className="float-right hidden text-[#766] sm:inline">
@@ -30,8 +30,8 @@ export default function Home({ latestPosts }: HomeProps) {
                         </span>
                     </div>
 
-                    <div className="grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
-                        <aside className="space-y-4 self-start">
+                    <div className="grid gap-3 md:grid-cols-[240px_minmax(0,1fr)]">
+                        <aside className="space-y-3 self-start">
                             <section className="retro-panel">
                                 <h2 className="retro-heading">プロフィール</h2>
                                 <div className="p-3">
@@ -102,7 +102,7 @@ export default function Home({ latestPosts }: HomeProps) {
                             </section>
                         </aside>
 
-                        <div className="min-w-0 space-y-4">
+                        <div className="min-w-0 space-y-3">
                             <section className="retro-panel">
                                 <h1 className="retro-heading">
                                     WELCOME TO IKEHARA PRESS

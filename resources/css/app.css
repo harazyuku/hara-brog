@@ -140,6 +140,8 @@
 
     html {
         font-size: 105%;
+        scrollbar-color: #6f2424 #080606;
+        scrollbar-width: thin;
     }
 
     body {
@@ -218,15 +220,42 @@
         @apply mx-auto w-full max-w-[1180px] px-2 sm:px-3;
     }
 
+    .retro-site-frame {
+        @apply border-x border-[#352929];
+        box-shadow:
+            -1px 0 #0a0707,
+            1px 0 #0a0707;
+    }
+
+    .retro-address-bar {
+        @apply flex items-center gap-2 border-x border-t border-[#3f3030] bg-[#090808] px-2 py-1 font-mono text-[9px];
+        box-shadow: inset 0 1px #211717;
+    }
+
+    .retro-location {
+        @apply border border-[#3e3232] bg-black px-2 py-1 font-mono text-[10px] text-[#918686];
+        box-shadow:
+            inset 1px 1px #211717,
+            inset -1px -1px #030303;
+    }
+
     .retro-panel {
         @apply border-3 border-double border-[#604747] bg-black;
         box-shadow:
-            inset 0 1px 0 rgb(255 255 255 / 5%),
-            3px 3px 0 #050404;
+            inset 1px 1px 0 #211717,
+            inset -1px -1px 0 #030303,
+            2px 2px 0 #050404;
     }
 
     .retro-heading {
         @apply bg-[#5f2020] px-2 py-1.5 text-[11px] font-bold tracking-wide text-white uppercase;
+        background-image: repeating-linear-gradient(
+            90deg,
+            transparent 0,
+            transparent 3px,
+            rgb(0 0 0 / 18%) 3px,
+            rgb(0 0 0 / 18%) 4px
+        );
         border-top: 1px solid #a85656;
         border-right: 1px solid #281010;
         border-bottom: 2px solid #281010;
@@ -249,11 +278,19 @@
 
     .da-button {
         @apply rounded-none bg-[#321b1b] px-3 py-1.5 text-xs font-bold text-[#eee8e8] hover:bg-[#482222] disabled:cursor-not-allowed disabled:opacity-30;
-        border-top: 1px solid #8c4b4b;
-        border-right: 1px solid #180b0b;
-        border-bottom: 1px solid #180b0b;
-        border-left: 1px solid #8c4b4b;
+        border-top: 2px solid #8c4b4b;
+        border-right: 2px solid #180b0b;
+        border-bottom: 2px solid #180b0b;
+        border-left: 2px solid #8c4b4b;
         text-shadow: 0 1px #000;
+    }
+
+    .da-button:active {
+        border-top-color: #180b0b;
+        border-right-color: #8c4b4b;
+        border-bottom-color: #8c4b4b;
+        border-left-color: #180b0b;
+        transform: translate(1px, 1px);
     }
 
     .press-tab {
